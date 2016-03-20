@@ -7,7 +7,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
         <meta charset="utf-8">
-        <title> aaaaaaaaaaaaaa</title>
+        <title> Blog </title>
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='css/styleSidebar.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename='css/sidebar.css') }}" rel="stylesheet">
@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Project name</a>
+        <a class="navbar-brand" href="#">My Blog</a>
 
       </div>
         <button type="button" class="navbar-toggle toggle-right" data-toggle="sidebar" data-target=".sidebar-right">
@@ -58,16 +58,22 @@
     <div class="row">
       <div class="col-xs-7 col-sm-3 col-md-3 sidebar sidebar-left sidebar-animate sidebar-md-show">
         <ul class="nav navbar-stacked">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#about">About</a></li>
+        <li><a class="active" href="{{ url_for('index') }}">Home</a></li>
+        {% for post in g.post %}
+          <li ><a href="{{ url_for('post', post_id = post.id) }}">{{ post.title }}</a></li>
+          {% endfor %}
+          <li><a class="active" >About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </div>
       <div class="main col-md-9 col-md-offset-3">
 
          <div class="page-header">
+
             <h2>{{ post.title }}<br><small> by Saiful Azad</small></h2>
-            <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:00 PM</p>
+{#            <p><span class="glyphicon glyphicon-time"></span> Posted on August 28, 2013 at 10:00 PM</p>#}
+            <p><span class="glyphicon glyphicon-time"></span> Posted on {{ post.created_date.strftime("%B %d, %Y at %H:%M") }}</p>
+
             <button type="button" class="btn btn-success" style="background-color: #3a5795;border-color: #3a5795;">Share This Article on Facebook</button>
         </div>
       </div>
@@ -75,6 +81,9 @@
         <ul class="nav navbar-stacked">
           <li class="active"><a href="#">Home</a></li>
           <li><a href="#contact">Hi {{  g.user.username }}</a></li>
+          {% if g.user %}
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+          {% endif %}
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -111,7 +120,7 @@
                             <span class="glyphicon glyphicon-star"></span>
                             <span class="glyphicon glyphicon-star-empty"></span>
                             {{ comment.usr.username }}
-                            <span class="pull-right">10 days ago</span>
+                            <span class="pull-right">Commented on {{ comment.created_date.strftime("%B %d, %Y at %H:%M") }}</span>
                             <p>{{ comment.text }}</p>
 
 

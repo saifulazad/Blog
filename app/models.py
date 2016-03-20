@@ -1,3 +1,4 @@
+import datetime
 from app import db
 
 
@@ -21,7 +22,8 @@ class Post(db.Model):
     title = db.Column(db.String(50))
     # comments = db.relationship('Comment', backref='post',
     #                             lazy='dynamic')
-    comments = db.relationship('Comment', backref='post')
+    created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    comments = db.relationship('Comment', backref='post', order_by="desc(Comment.created_date)")
 
     def __repr__(self):
         return '<Post %r> <Comment %r>' % (self.title, self.comments)
@@ -32,5 +34,6 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     usr = db.relationship("User", back_populates="comment")
+    created_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     def __repr__(self):
         return '<Comment %r>' % (self.text)

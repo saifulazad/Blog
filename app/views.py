@@ -1,24 +1,47 @@
+import dateutil
 from flask import render_template, flash, redirect, session, g, request
 from flask.helpers import url_for
+import flask_login
+from sqlalchemy import desc
 
 from app import app, login_manager
 from app import models, db
 from .forms import LoginForm
 
+# @app.template_filter('strftime')
+# def _jinja2_filter_datetime(date, fmt=None):
+#     date = dateutil.parser.parse(date)
+#     native = date.replace(tzinfo=None)
+#     format='%b %d, %Y'
+#     return native.strftime(format)
+
+
 @app.before_request
 def call():
-    session['user_id'] = 2
+    session['user_id'] = 1
     print 'before'
     id =  session.get('user_id')
     print id
 
     g.user =  models.User.query.get(id)
 
+    g.post = models.Post.query.all()
 
     print 'endbefore'
     # user = login_manager.user_callback()
     #
     # print user.email
+
+
+
+
+
+
+
+
+
+
+
 @login_manager.user_loader
 def user_loader(id):
 
@@ -54,7 +77,7 @@ def post_comment():
 
     db.session.add(comment)
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('post',post_id= post_id))
 
 @app.route('/<int:post_id>')
 def post(post_id):
@@ -63,5 +86,13 @@ def post(post_id):
 
 
     return render_template('post.html', post = post)
+
+@app.route('/logout')
+def logout():
+    #print flask_login.current_user.id
+    flask_login.logout_user()
+    #print flask_login.current_user.id
+
+    return redirect(url_for('index'))
 
 
