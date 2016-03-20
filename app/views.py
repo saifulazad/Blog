@@ -1,38 +1,30 @@
-from flask import render_template, flash, redirect
-from app import app
+from flask import render_template, flash, redirect, session, g
+
+from app import app, login_manager
+from app import models
 from .forms import LoginForm
+
+@app.before_request
+def call():
+    session['user_id'] = 1
+    print 'before'
+    id =  session.get('user_id')
+    print id
+
+    g.user =  models.User.query.get(id)
+
+
+    print 'endbefore'
+    # user = login_manager.user_callback()
+    #
+    # print user.email
+@login_manager.user_loader
+def user_loader(id):
+
+    return models.User.query.get(id)
+
 @app.route('/')
 def post():
     return render_template('post.html')
 
-# @app.route('/')
-# @app.route('/index')
-# def index():
-#     user = {'nickname': 'Miguel'}
-#     posts = [
-#         {
-#             'author': {'nickname': 'John'},
-#             'body': 'Beautiful day in Portland!'
-#         },
-#         {
-#             'author': {'nickname': 'Susan'},
-#             'body': 'The Avengers movie was so cool!'
-#         }
-#     ]
-#     return render_template('index.html',
-#                            title='Home',
-#                            user=user,
-#                            posts=posts)
-#
-#
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         flash('Login requested for OpenID="%s", remember_me=%s' %
-#               (form.openid.data, str(form.remember_me.data)))
-#         return redirect('/index')
-#     return render_template('login.html',
-#                            title='Sign In',
-#                            form=form,
-#                            providers=app.config['OPENID_PROVIDERS'])
+
